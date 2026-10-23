@@ -10,19 +10,13 @@
 		{
 			"binding": "DB",
 			"database_name": "my-emdash-site",
-			"database_id": "b0fb0e1c-3784-4d67-86ff-47270a87e83d",
+			"database_id": "0e4665fe-0128-41e1-b021-d251b8033e0d",
 		},
 	],
 	"r2_buckets": [
 		{
 			"binding": "MEDIA",
 			"bucket_name": "my-emdash-media",
-		},
-	],
-	"kv_namespaces": [
-		{
-			"binding": "SESSION",
-			"id": "995927a57a1b42cb9f1cd6813b561f0d",
 		},
 	],
 	// Sandboxed plugins require Worker Loader, available on Workers paid plans. Uncomment to enable:
