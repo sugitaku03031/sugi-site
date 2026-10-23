@@ -1,0 +1,110 @@
+:root {
+	--color-bg: #fff;
+	--color-text: #212121;
+	--color-muted: #5f6368;
+	--color-line: #e0e0e0;
+	--color-link: #1a5fb4;
+	--font-body: "Roboto", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans",
+		Meiryo, sans-serif;
+	--page-width: 1100px;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	background: var(--color-bg);
+	color: var(--color-text);
+	font-family: var(--font-body);
+	font-size: 1rem;
+	line-height: 1.9;
+}
+
+a {
+	color: var(--color-link);
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+.site-header {
+	padding: 0 2rem;
+}
+
+.site-header nav {
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+	max-width: 1400px;
+	margin: 0 auto;
+	min-height: 5rem;
+}
+
+.site-header .site-title {
+	margin-right: auto;
+	color: var(--color-text);
+	font-size: 1.5rem;
+	text-decoration: none;
+	letter-spacing: 0.05em;
+}
+
+.site-header nav a:not(.site-title) {
+	color: var(--color-muted);
+	text-decoration: none;
+}
+
+.site-header nav a:not(.site-title):hover {
+	color: var(--color-text);
+}
+
+main {
+	max-width: var(--page-width);
+	margin: 0 auto;
+	padding: 2rem 1.5rem 4rem;
+}
+
+.site-footer {
+	padding: 2rem;
+	color: var(--color-muted);
+	font-size: 0.875rem;
+	text-align: center;
+	border-top: 1px solid var(--color-line);
+}
+
+@media (max-width: 720px) {
+	.site-header {
+		padding: 0 1rem;
+	}
+
+	.site-header nav {
+		gap: 0.5rem 1.25rem;
+		flex-wrap: wrap;
+		min-height: 0;
+		padding: 0.75rem 0;
+	}
+
+	/* タイトルは1行目、リンクと検索は2行目 */
+	.site-header .site-title {
+		flex: 1 1 100%;
+		margin-right: 0;
+		font-size: 1.25rem;
+	}
+
+	.site-header emdash-live-search {
+		display: block;
+		flex: 1 1 8rem;
+		min-width: 0;
+		margin-left: auto;
+	}
+
+	.site-header emdash-live-search input {
+		width: 100%;
+		box-sizing: border-box;
+	}
+}

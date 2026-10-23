@@ -1,0 +1,12 @@
+---
+import Base from "../layouts/Base.astro";
+import { getLang, useT } from "../i18n/ui";
+
+const t = useT(getLang(Astro.request));
+---
+
+<Base title={t.notFoundTitle}>
+	<h1>{t.notFoundTitle}</h1>
+	<p>{t.notFoundBody}</p>
+	<a href="/">{t.goHome}</a>
+</Base>

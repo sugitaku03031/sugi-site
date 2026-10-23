@@ -1,0 +1,289 @@
+---
+import { getSiteSettings } from "emdash";
+import { Image } from "emdash/ui";
+import Base from "../layouts/Base.astro";
+import { resolveStarterSiteIdentity } from "../utils/site-identity";
+import SocialLinks from "../components/SocialLinks.astro";
+import type { IconName } from "../utils/icons";
+import { getBlogPosts, getPreview, getReadingMinutes } from "../utils/blog";
+import { getLang, useT } from "../i18n/ui";
+
+const t = useT(getLang(Astro.request));
+const { posts, cacheHint } = await getBlogPosts(10);
+const { siteTitle, siteTagline } = resolveStarterSiteIdentity(
+	await getSiteSettings(),
+);
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const profile = [
+	["読み方", "みずまき あさき | すぎはら たくみ"],
+	["あだ名", "水朝 (みずあさ) | 杉拓 (すぎたく)"],
+	["性別", "男"],
+	["活動開始日", "2014"],
+	["活動内容", "自由 (写真撮ったり、バイクでツーリング行ったり、同人即売会に行ったり)"],
+	["過去の活動", "ゲーム実況, ゲーム配信, 雑談配信, 製品紹介"],
+	["キャラクター作成", "VRoid Studio"],
+];
+const socials: { label: string; href: string; icon: IconName }[] = [
+	{ label: "Misskey", href: "https://misskey.io/@sugitaku03031", icon: "misskey" },
+	{ label: "Bluesky", href: "https://bsky.app/profile/sugisoft.net", icon: "bluesky" },
+	{ label: "X (Twitter)", href: "https://twitter.com/sugitaku03031", icon: "x" },
+	{ label: "Facebook", href: "https://www.facebook.com/sugitaku03031", icon: "facebook" },
+	{ label: "Instagram", href: "https://www.instagram.com/sugitaku03031/", icon: "instagram" },
+	{ label: "YouTube", href: "https://www.youtube.com/@sugitaku03031", icon: "youtube" },
+	{ label: "ニコニコ動画", href: "https://www.nicovideo.jp/user/35004980", icon: "niconico" },
+	{ label: "Twitch", href: "https://www.twitch.tv/sugitaku03031", icon: "twitch" },
+	{ label: "ツイキャス", href: "https://ja.twitcasting.tv/sugitaku03031", icon: "twitcasting" },
+	{ label: "Threads", href: "https://www.threads.net/@sugitaku03031", icon: "threads" },
+];
+
+const banners: {
+	name: string;
+	url: string;
+	image: string;
+	links: { label: string; href: string; icon: IconName }[];
+}[] = [
+	{
+		name: "廻る月と兎",
+		url: "https://uzuki-hiro.net/",
+		image: "/images/banner-uzuki-hiro.png",
+		links: [
+			{ label: "X", href: "https://x.com/UzukiHiro1410", icon: "x" },
+			{ label: "pixiv", href: "https://www.pixiv.net/users/1349719", icon: "pixiv" },
+			{ label: "Bluesky", href: "https://bsky.app/profile/uzukihiro1410.bsky.social", icon: "bluesky" },
+		],
+	},
+	{
+		name: "Polvoron",
+		url: "http://polvoro.com/",
+		image: "/images/banner-polvoron.png",
+		links: [
+			{ label: "X", href: "https://x.com/gotokuayashi", icon: "x" },
+			{ label: "pixiv", href: "https://www.pixiv.net/users/5040807", icon: "pixiv" },
+		],
+	},
+];
+const profileImage = "/_emdash/api/media/file/01M5HQ6BS8T6BM44CQB00DDD25.01M5HQ6BTKK8CESB52FP0PX2D9.png";
+---
+
+<style>
+	.profile {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+		gap: 3rem;
+		align-items: start;
+	}
+	.profile-image img {
+		width: 100%;
+		aspect-ratio: 1;
+		object-fit: cover;
+	}
+	@media (max-width: 720px) {
+		.profile {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+	}
+	.profile h1 {
+		margin: 1rem 0 2rem;
+		font-size: clamp(2rem, 5vw, 3.5rem);
+		font-weight: 400;
+		line-height: 1.3;
+	}
+	.profile dl {
+		margin: 0;
+	}
+	.profile dl div {
+		display: flex;
+		gap: 0.5em;
+		margin-bottom: 1rem;
+	}
+	.profile dt,
+	.profile dd {
+		margin: 0;
+	}
+	.profile dt {
+		flex: none;
+	}
+	.social {
+		max-width: 420px;
+		margin: 2rem auto 3rem;
+	}
+	.social :global(.social-links) {
+		justify-content: center;
+		row-gap: 1.25rem;
+	}
+	.section-title {
+		font-weight: 400;
+		padding-top: 2rem;
+		border-top: 1px solid var(--color-line);
+	}
+	.work {
+		margin-bottom: 3rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--color-line);
+	}
+	.work h2 {
+		margin: 0 0 1rem;
+		font-size: 2rem;
+		font-weight: 400;
+	}
+	.work p {
+		margin: 0 0 0.5rem;
+	}
+	.work-row {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 3rem;
+		align-items: center;
+	}
+	.work-row > img {
+		width: 100%;
+		height: auto;
+	}
+	.video {
+		aspect-ratio: 16 / 9;
+	}
+	.video iframe {
+		width: 100%;
+		height: 100%;
+		border: 0;
+	}
+	.banners {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 3rem;
+	}
+	.banners-title {
+		margin: 3rem 0 1rem;
+		font-size: 1.5rem;
+		font-weight: 400;
+	}
+	.banner h3 {
+		margin: 0 0 0.5rem;
+		font-size: 1.25rem;
+		font-weight: 400;
+	}
+	.banner img {
+		display: block;
+		width: 100%;
+		height: auto;
+		image-rendering: auto;
+		margin-bottom: 0.75rem;
+	}
+	@media (max-width: 720px) {
+		.work-row,
+		.banners {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+	}
+</style>
+
+<Base title={siteTitle} description={siteTagline}>
+	<section class="profile">
+		<div class="profile-image">
+			<img src={profileImage} alt="水巻 朝木 | 杉原 拓実" width="1080" height="1080" />
+		</div>
+		<div class="profile-body">
+		<h1>水巻 朝木 | 杉原 拓実</h1>
+		<dl>
+			{profile.map(([label, value]) => (
+				<div>
+					<dt>{label}:</dt>
+					<dd>{value}</dd>
+				</div>
+			))}
+		</dl>
+		<div class="social">
+			<SocialLinks links={socials} />
+		</div>
+		</div>
+	</section>
+
+	<section class="work">
+		<div class="work-row">
+			<div>
+				<h2>夏だ！12時間生放送！</h2>
+				<p>2017/08/08 に行ったリレー形式による生放送企画</p>
+				<p>
+					公式ページ:
+					<a href="https://sites.google.com/view/r-paz-clan" rel="noopener noreferrer">夏だ！12時間生放送！</a>
+				</p>
+			</div>
+			<div class="video">
+				<iframe
+					src="https://www.youtube.com/embed/t0eDIAUpi4A?si=c_kel3vTCuJ-22xW"
+					title="YouTube video player"
+					frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					referrerpolicy="strict-origin-when-cross-origin"
+					allowfullscreen
+					loading="lazy"></iframe>
+			</div>
+		</div>
+	</section>
+
+	<section class="work">
+		<div class="work-row">
+			<img src="/images/biological-destruction.png" alt="Biological Destruction" width="1280" height="719" loading="lazy" />
+			<div>
+				<h2>Biological Destruction</h2>
+				<p>専門学生時代にチームで制作したゲーム</p>
+				<p>ゲームエンジン: Unreal Engine 4</p>
+				<p>言語: ブループリント</p>
+				<p>
+					公式ページ:
+					<a href="https://sites.google.com/view/biological-destruction/home" rel="noopener noreferrer">Biological Destruction</a>
+				</p>
+			</div>
+		</div>
+
+		<h3 class="banners-title">応援バナー</h3>
+		<div class="banners">
+			{banners.map((b) => (
+				<div class="banner">
+					<h3>{b.name}</h3>
+					<a href={b.url} rel="noopener noreferrer"><img src={b.image} alt={b.name} width="200" height="40" loading="lazy" /></a>
+					<SocialLinks links={b.links} size={36} />
+				</div>
+			))}
+		</div>
+	</section>
+
+	<h2 class="section-title">{t.recentPosts}</h2>
+
+	{
+		posts.length === 0 ? (
+			<p>
+				{t.noPosts} <a href="/_emdash/admin/content/posts/new">{t.createOne}</a>
+			</p>
+		) : (
+			<ul>
+				{posts.map((post) => (
+					<li>
+						<a href={`/posts/${post.id}`}>
+							{post.data.featured_image && (
+								<div {...post.edit.featured_image}><Image image={post.data.featured_image} /></div>
+							)}
+							<h2 {...post.edit.title}>{post.data.title}</h2>
+						</a>
+						{getPreview(post) && (
+							<p {...(post.data.excerpt ? post.edit.excerpt : {})}>{getPreview(post)}</p>
+						)}
+						{post.data.publishedAt && (
+							<time datetime={post.data.publishedAt.toISOString()}>
+								{post.data.publishedAt.toLocaleDateString(t.dateLocale, {
+									year: "numeric",
+									month: "long",
+									day: "numeric",
+								})}
+							</time>
+						)}
+						<span>・{t.readingTime(getReadingMinutes(post))}</span>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</Base>

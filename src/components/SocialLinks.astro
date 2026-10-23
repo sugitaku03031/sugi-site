@@ -1,0 +1,58 @@
+---
+import { icons, type IconName } from "../utils/icons";
+
+interface Props {
+	links: { label: string; href: string; icon: IconName }[];
+	size?: number;
+}
+
+const { links, size = 60 } = Astro.props;
+---
+
+<ul class="social-links" style={`--size:${size}px`}>
+	{
+		links.map(({ label, href, icon }) => (
+			<li>
+				<a
+					href={href}
+					rel="noopener noreferrer"
+					aria-label={label}
+					title={label}
+					style={`background:${icons[icon].color}`}
+				>
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<path d={icons[icon].path} fill="currentColor" />
+					</svg>
+				</a>
+			</li>
+		))
+	}
+</ul>
+
+<style>
+	.social-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: calc(var(--size) * 0.35);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	a {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: var(--size);
+		height: var(--size);
+		border-radius: 50%;
+		color: #fff;
+		transition: opacity 0.15s;
+	}
+	a:hover {
+		opacity: 0.8;
+	}
+	svg {
+		width: 55%;
+		height: 55%;
+	}
+</style>

@@ -1,0 +1,109 @@
+---
+import { getBlogPosts, getPreview, getReadingMinutes } from "../utils/blog";
+import { Image } from "emdash/ui";
+import Base from "../layouts/Base.astro";
+import { getLang, useT } from "../i18n/ui";
+
+const t = useT(getLang(Astro.request));
+const { posts, cacheHint } = await getBlogPosts(100);
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const pastBlogUrl = "https://sugitaku03031.hatenablog.com/";
+---
+
+<Base title={t.blog} description={t.blogDescription}>
+	<h1>{t.blog}</h1>
+
+	{posts.length === 0 && <p>{t.noBlog}</p>}
+
+	{
+		posts.map((post) => (
+			<article class="blog-item">
+				{post.data.featured_image && (
+					<a href={`/posts/${post.id}`} {...post.edit.featured_image}>
+						<Image image={post.data.featured_image} />
+					</a>
+				)}
+				<div>
+					{post.data.publishedAt && (
+						<time datetime={post.data.publishedAt.toISOString()}>
+							{post.data.publishedAt.toLocaleDateString(t.dateLocale, {
+								year: "numeric",
+								month: "long",
+								day: "numeric",
+							})}
+						</time>
+					)}
+					<span class="reading-time">・{t.readingTime(getReadingMinutes(post))}</span>
+					<h2 {...post.edit.title}>
+						<a href={`/posts/${post.id}`}>{post.data.title}</a>
+					</h2>
+					{getPreview(post) && (
+						<p {...(post.data.excerpt ? post.edit.excerpt : {})}>{getPreview(post)}</p>
+					)}
+				</div>
+			</article>
+		))
+	}
+
+	<aside class="past-blog">
+		<h2>{t.pastBlogTitle}</h2>
+		<p>{t.pastBlogBody}</p>
+		<a href={pastBlogUrl} target="_blank" rel="noopener noreferrer">{t.pastBlogLink}</a>
+	</aside>
+</Base>
+
+<style>
+	h1 {
+		margin: 1rem 0 2rem;
+		font-size: clamp(2rem, 5vw, 3.5rem);
+		font-weight: 400;
+	}
+	.blog-item {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1rem;
+		padding: 1.5rem 0;
+		border-top: 1px solid var(--color-line);
+	}
+	@media (min-width: 721px) {
+		.blog-item:has(img) {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+			gap: 2rem;
+		}
+	}
+	.blog-item time,
+	.reading-time {
+		color: var(--color-muted);
+		font-size: 0.875rem;
+	}
+	.blog-item h2 {
+		margin: 0.25rem 0 0.5rem;
+		font-size: 1.5rem;
+		font-weight: 500;
+	}
+	.blog-item h2 a {
+		color: var(--color-text);
+		text-decoration: none;
+	}
+	.blog-item h2 a:hover {
+		text-decoration: underline;
+	}
+	.blog-item p {
+		margin: 0;
+	}
+	.past-blog {
+		margin-top: 2rem;
+		padding: 1.5rem;
+		border: 1px solid var(--color-line);
+		border-radius: 8px;
+	}
+	.past-blog h2 {
+		margin: 0 0 0.5rem;
+		font-size: 1.25rem;
+		font-weight: 500;
+	}
+	.past-blog p {
+		margin: 0 0 0.75rem;
+	}
+</style>

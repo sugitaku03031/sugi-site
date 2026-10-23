@@ -1,0 +1,70 @@
+---
+import { getTaxonomyTerms } from "emdash";
+import { getBlogPosts } from "../utils/blog";
+import { getLang, localizeTerm, useT } from "../i18n/ui";
+
+const lang = getLang(Astro.request);
+const t = useT(lang);
+
+const [categories, { posts }] = await Promise.all([
+	getTaxonomyTerms("category", { includeCounts: true }),
+	getBlogPosts(5),
+]);
+---
+
+<div class="sidebar">
+	<section>
+		<h3>{t.categories}</h3>
+		<ul>
+			{
+				categories.map((c) => (
+					<li>
+						<a href={`/category/${c.slug}`}>{localizeTerm(lang, c.slug, c.label)}</a>
+						{typeof c.count === "number" && ` (${c.count})`}
+					</li>
+				))
+			}
+		</ul>
+	</section>
+	<section>
+		<h3>{t.recentPosts}</h3>
+		<ul>
+			{
+				posts.map((post) => (
+					<li>
+						<a href={`/posts/${post.id}`}>{post.data.title}</a>
+						{post.data.publishedAt && (
+							<time datetime={post.data.publishedAt.toISOString()}>
+								{post.data.publishedAt.toLocaleDateString(t.dateLocale, {
+									year: "numeric",
+									month: "long",
+									day: "numeric",
+								})}
+							</time>
+						)}
+					</li>
+				))
+			}
+		</ul>
+	</section>
+</div>
+
+<style>
+	.sidebar section {
+		margin-top: 2rem;
+	}
+	h3 {
+		margin: 0 0 0.5rem;
+		font-size: 1.125rem;
+		font-weight: 500;
+	}
+	ul {
+		margin: 0;
+		padding-left: 1.25rem;
+	}
+	time {
+		display: block;
+		color: var(--color-muted);
+		font-size: 0.875rem;
+	}
+</style>

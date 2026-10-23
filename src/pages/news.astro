@@ -1,0 +1,75 @@
+---
+import { getEmDashCollection } from "emdash";
+import { PortableText } from "emdash/ui";
+import Base from "../layouts/Base.astro";
+import { getLang, useT } from "../i18n/ui";
+
+const t = useT(getLang(Astro.request));
+
+const { entries: news, cacheHint } = await getEmDashCollection("posts", {
+	where: { category: "updates" },
+	orderBy: { published_at: "desc" },
+	limit: 100,
+});
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+---
+
+<Base title={t.news} description={t.newsDescription}>
+	<h1>{t.news}</h1>
+
+	{news.length === 0 && <p>{t.noNews}</p>}
+
+	{
+		news.map((post) => (
+			<article class="news-item">
+				{post.data.publishedAt && (
+					<time datetime={post.data.publishedAt.toISOString()}>
+						{post.data.publishedAt.toLocaleDateString(t.dateLocale, {
+							year: "numeric",
+							month: "long",
+							day: "numeric",
+						})}
+					</time>
+				)}
+				<h2 {...post.edit.title}>
+					<a href={`/posts/${post.id}`}>{post.data.title}</a>
+				</h2>
+				<div {...post.edit.content}>
+					<PortableText value={post.data.content} />
+				</div>
+			</article>
+		))
+	}
+</Base>
+
+<style>
+	h1 {
+		margin: 1rem 0 2rem;
+		font-size: clamp(2rem, 5vw, 3.5rem);
+		font-weight: 400;
+	}
+	.news-item {
+		padding: 1.5rem 0;
+		border-top: 1px solid var(--color-line);
+	}
+	.news-item time {
+		color: var(--color-muted);
+		font-size: 0.875rem;
+	}
+	.news-item h2 {
+		margin: 0.25rem 0 0.5rem;
+		font-size: 1.5rem;
+		font-weight: 500;
+	}
+	.news-item h2 a {
+		color: var(--color-text);
+		text-decoration: none;
+	}
+	.news-item h2 a:hover {
+		text-decoration: underline;
+	}
+	.news-item :global(ul) {
+		margin: 0;
+		padding-left: 1.25rem;
+	}
+</style>
